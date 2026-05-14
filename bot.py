@@ -4,12 +4,12 @@ import asyncio
 import os
 from gtts import gTTS
 from dotenv import load_dotenv
-import imageio_ffmpeg
+import shutil
 
 load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
-FFMPEG_PATH = imageio_ffmpeg.get_ffmpeg_exe()
+FFMPEG_PATH = shutil.which("ffmpeg") or imageio_ffmpeg.get_ffmpeg_exe()
 
 intents = discord.Intents.default()
 intents.message_content = True
