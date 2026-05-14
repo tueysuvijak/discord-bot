@@ -9,7 +9,8 @@ import imageio_ffmpeg
 load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
-FFMPEG_PATH = r"C:\Users\Suvi\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\imageio_ffmpeg\binaries\ffmpeg-win-x86_64-v7.1.exe"
+FFMPEG_PATH = imageio_ffmpeg.get_ffmpeg_exe()
+
 intents = discord.Intents.default()
 intents.message_content = True
 intents.voice_states = True
@@ -52,6 +53,7 @@ async def schedule_leave(guild_id):
 @bot.event
 async def on_ready():
     print(f"✅ Bot พร้อมใช้งาน: {bot.user} (ID: {bot.user.id})")
+    print(f"FFMPEG path: {FFMPEG_PATH}")
 
 
 @bot.event
@@ -65,7 +67,6 @@ async def on_voice_state_update(member, before, after):
     if after.channel is not None and before.channel != after.channel:
         voice_channel = after.channel
 
-        # ส่งข้อความใน voice channel chat
         await voice_channel.send(f"🎉 ยินดีต้อนรับ **{member.display_name}**!")
 
         if state["leave_task"] and not state["leave_task"].done():
@@ -82,13 +83,9 @@ async def on_voice_state_update(member, before, after):
 
                 filename = create_tts(f"ยินดีต้อนรับ {member.display_name}")
                 voice_client.play(
-    discord.FFmpegPCMAudio(
-        filename,
-        executable=FFMPEG_PATH,
-        options="-loglevel quiet"
-    ),
-    after=lambda e: os.remove(filename) if os.path.exists(filename) else None
-)
+                    discord.FFmpegPCMAudio(filename, executable=FFMPEG_PATH),
+                    after=lambda e: os.remove(filename) if os.path.exists(filename) else None
+                )
 
             except Exception as e:
                 print(f"เกิดข้อผิดพลาด: {e}")
@@ -99,13 +96,9 @@ async def on_voice_state_update(member, before, after):
                 if voice_client and not voice_client.is_playing():
                     filename = create_tts(f"ยินดีต้อนรับ {member.display_name}")
                     voice_client.play(
-    discord.FFmpegPCMAudio(
-        filename,
-        executable=FFMPEG_PATH,
-        options="-loglevel quiet"
-    ),
-    after=lambda e: os.remove(filename) if os.path.exists(filename) else None
-)
+                        discord.FFmpegPCMAudio(filename, executable=FFMPEG_PATH),
+                        after=lambda e: os.remove(filename) if os.path.exists(filename) else None
+                    )
             except Exception as e:
                 print(f"เกิดข้อผิดพลาดขณะพูด: {e}")
 
