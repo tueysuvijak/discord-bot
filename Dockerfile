@@ -4,6 +4,8 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     libopus0 \
     libopus-dev \
+    libsodium-dev \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
